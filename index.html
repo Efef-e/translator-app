@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0"
+    />
+    <title>Pro Translator</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <div class="card">
+      <button
+        class="theme-toggle"
+        onclick="toggleTheme()"
+        title="Mod Değiştir"
+      >
+        🌙
+      </button>
+      <h2>DeepL Translator</h2>
+
+      <div class="input-group">
+        <label>Dil Seçimi</label>
+        <select id="langMode">
+          <option value="tr-en">
+            🇹🇷 Türkçe ➔ 🇺🇸 İngilizce
+          </option>
+          <option value="en-tr">
+            🇺🇸 İngilizce ➔ 🇹🇷 Türkçe
+          </option>
+        </select>
+      </div>
+
+      <div class="input-group">
+        <label>Metin</label>
+        <textarea
+          id="inputText"
+          placeholder="Metni buraya girin..."
+        ></textarea>
+      </div>
+
+      <button class="main-btn" onclick="doTranslate()">
+        Çeviriyi Başlat
+      </button>
+
+      <div class="result-container">
+        <button class="copy-btn" onclick="copyResult()">
+          📋 Kopyala
+        </button>
+        <div id="result">
+          Çeviri sonucu burada görünecek...
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function toggleTheme() {
+        document.body.classList.toggle("dark-mode");
+        const btn = document.querySelector(".theme-toggle");
+        btn.innerText = document.body.classList.contains(
+          "dark-mode"
+        )
+          ? "☀️"
+          : "🌙";
+      }
+
+      async function copyResult() {
+        const text =
+          document.getElementById("result").innerText;
+        if (
+          text &&
+          text !== "Çeviri sonucu burada görünecek..."
+        ) {
+          await navigator.clipboard.writeText(text);
+          alert("Kopyalandı!");
+        }
+      }
+
+      async function doTranslate() {
+        const text =
+          document.getElementById("inputText").value;
+        const mode =
+          document.getElementById("langMode").value;
+        const resultDiv = document.getElementById("result");
+
+        if (!text.trim()) return;
+
+        const [source, target] = mode.split("-");
+        resultDiv.innerText = "DeepL ile çevriliyor...";
+
+        try {
+          const response = await fetch(
+            "http://127.0.0.1:8000/translate",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                text,
+                source_lang: source,
+                target_lang: target,
+              }),
+            }
+          );
+          const data = await response.json();
+          resultDiv.innerText = data.translated_text;
+        } catch (error) {
+          resultDiv.innerText = "Bağlantı hatası!";
+        }
+      }
+    </script>
+  </body>
+</html>

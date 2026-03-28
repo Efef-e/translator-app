@@ -1,0 +1,142 @@
+:root {
+  --primary-color: #6366f1;
+  --primary-hover: #4f46e5;
+  --bg-color: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #1e293b;
+  --text-sub: #64748b;
+  --border-color: #e2e8f0;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+/* Gece Modu Değişkenleri */
+body.dark-mode {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --text-main: #f1f5f9;
+  --text-sub: #94a3b8;
+  --border-color: #334155;
+  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+}
+
+body {
+  font-family: "Inter", system-ui, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  transition: background 0.3s ease;
+}
+
+.card {
+  background: var(--card-bg);
+  width: 100%;
+  max-width: 480px;
+  padding: 2rem;
+  border-radius: 1.5rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+/* Gece Modu Butonu */
+.theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  cursor: pointer;
+  font-size: 1.2rem;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  width: auto;
+}
+
+h2 {
+  text-align: center;
+  color: var(--primary-color);
+  margin-top: 0;
+}
+
+.input-group {
+  margin-bottom: 1.5rem;
+}
+label {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-sub);
+}
+
+select,
+textarea {
+  width: 100%;
+  padding: 0.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-size: 1rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+button.main-btn {
+  width: 100%;
+  padding: 0.875rem;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  margin-top: 1rem;
+}
+
+button.main-btn:hover {
+  background: var(--primary-hover);
+}
+
+/* Sonuç Alanı ve Kopyala Butonu */
+.result-container {
+  position: relative;
+  margin-top: 1.5rem;
+}
+
+#result {
+  padding: 1rem;
+  background: #f1f5f9;
+  border-radius: 0.75rem;
+  min-height: 60px;
+  color: #1e293b;
+  border-left: 4px solid var(--primary-color);
+}
+
+body.dark-mode #result {
+  background: #334155;
+  color: #f1f5f9;
+}
+
+.copy-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  font-size: 0.7rem;
+  cursor: pointer;
+  opacity: 0.8;
+}
+
+.copy-btn:hover {
+  opacity: 1;
+}
