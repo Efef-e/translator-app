@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
@@ -6,7 +6,7 @@
       name="viewport"
       content="width=device-width, initial-scale=1.0"
     />
-    <title>Pro Translator</title>
+    <title>AI Voice Translator</title>
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
@@ -18,7 +18,7 @@
       >
         🌙
       </button>
-      <h2>DeepL Translator</h2>
+      <h2>AI Voice Translator</h2>
 
       <div class="input-group">
         <label>Dil Seçimi</label>
@@ -33,16 +33,26 @@
       </div>
 
       <div class="input-group">
-        <label>Metin</label>
+        <label>Metin veya Ses</label>
         <textarea
           id="inputText"
-          placeholder="Metni buraya girin..."
+          rows="4"
+          placeholder="Konuşun veya yazın..."
         ></textarea>
       </div>
 
-      <button class="main-btn" onclick="doTranslate()">
-        Çeviriyi Başlat
-      </button>
+      <div class="btn-group">
+        <button class="main-btn" onclick="doTranslate()">
+          🚀 Çevir
+        </button>
+        <button
+          id="micBtn"
+          class="mic-btn"
+          onclick="startSpeech()"
+        >
+          🎤 Konuş
+        </button>
+      </div>
 
       <div class="result-container">
         <button class="copy-btn" onclick="copyResult()">
@@ -55,28 +65,73 @@
     </div>
 
     <script>
+      // 1. TEMA DEĞİŞTİRME
       function toggleTheme() {
         document.body.classList.toggle("dark-mode");
         const btn = document.querySelector(".theme-toggle");
         btn.innerText = document.body.classList.contains(
-          "dark-mode"
+          "dark-mode",
         )
           ? "☀️"
           : "🌙";
       }
 
+      // 2. KOPYALAMA
       async function copyResult() {
         const text =
           document.getElementById("result").innerText;
-        if (
-          text &&
-          text !== "Çeviri sonucu burada görünecek..."
-        ) {
+        if (text && text.length > 5) {
           await navigator.clipboard.writeText(text);
-          alert("Kopyalandı!");
+          alert("Sonuç kopyalandı!");
         }
       }
 
+      // 3. SES TANIMA (Web Speech API)
+      function startSpeech() {
+        const SpeechRecognition =
+          window.SpeechRecognition ||
+          window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+          alert(
+            "Tarayıcınız ses tanımayı desteklemiyor. Lütfen Chrome kullanın.",
+          );
+          return;
+        }
+
+        const recognition = new SpeechRecognition();
+        const mode =
+          document.getElementById("langMode").value;
+        const micBtn = document.getElementById("micBtn");
+        const inputText =
+          document.getElementById("inputText");
+
+        // Mod TR ise Türkçe, EN ise İngilizce dinle
+        recognition.lang = mode.startsWith("tr")
+          ? "tr-TR"
+          : "en-US";
+
+        recognition.onstart = () => {
+          micBtn.classList.add("recording");
+          micBtn.innerText = "🛑 Dinliyorum...";
+        };
+
+        recognition.onresult = (event) => {
+          const speechToText =
+            event.results[0][0].transcript;
+          inputText.value = speechToText;
+          // Metin kutuya düştüğü an çeviriyi başlat
+          doTranslate();
+        };
+
+        recognition.onend = () => {
+          micBtn.classList.remove("recording");
+          micBtn.innerText = "🎤 Konuş";
+        };
+
+        recognition.start();
+      }
+
+      // 4. DEEPL ÇEVİRİ (Backend Bağlantısı)
       async function doTranslate() {
         const text =
           document.getElementById("inputText").value;
@@ -87,7 +142,7 @@
         if (!text.trim()) return;
 
         const [source, target] = mode.split("-");
-        resultDiv.innerText = "DeepL ile çevriliyor...";
+        resultDiv.innerText = "Çevriliyor...";
 
         try {
           const response = await fetch(
@@ -102,12 +157,12 @@
                 source_lang: source,
                 target_lang: target,
               }),
-            }
+            },
           );
           const data = await response.json();
           resultDiv.innerText = data.translated_text;
         } catch (error) {
-          resultDiv.innerText = "Bağlantı hatası!";
+          resultDiv.innerText = "Backend bağlantı hatası!";
         }
       }
     </script>
